@@ -22,4 +22,6 @@ namespace WeatherApp.Model
         public Area Country { get; set; }
         public Area AdministrativeArea { get; set; }
     }
+
+
 }

@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{444FED62-BF8E-45C5-B8E8-A68DC968AD8A}</ProjectGuid>
+    <ProjectGuid>{DC376DEF-5D08-45FA-A3E6-5538EA266221}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <RootNamespace>WeatherApp</RootNamespace>
     <AssemblyName>WeatherApp</AssemblyName>

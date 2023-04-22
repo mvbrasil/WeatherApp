@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
-using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using WeatherApp.Model;
@@ -14,26 +14,28 @@ namespace WeatherApp.ViewModel
     public class WeatherVM : INotifyPropertyChanged
     {
         private string query;
-            
+
         public string Query
         {
             get { return query; }
-            set 
+            set
             {
                 query = value;
                 OnPropertyChanged("Query");
             }
         }
 
-        private CurrentConditions currentConditions;
+        public ObservableCollection<City> Cities { get; set; }
 
-        public CurrentConditions CurrentConditions
+        private CurrrentConditions currrentConditions;
+
+        public CurrrentConditions CurrrentConditions
         {
-            get { return currentConditions; }
+            get { return currrentConditions; }
             set
-            { 
-                currentConditions = value;
-                OnPropertyChanged("CurrentConditions");
+            {
+                currrentConditions = value;
+                OnPropertyChanged("CurrrentConditions");
             }
         }
 
@@ -42,11 +44,15 @@ namespace WeatherApp.ViewModel
         public City SelectedCity
         {
             get { return selectedCity; }
-            set { selectedCity = value; }
+            set
+            {
+                selectedCity = value;
+                OnPropertyChanged("SelectedCity");
+                GetCurrentConditions();
+            }
         }
 
         public SearchCommand SearchCommand { get; set; }
-
 
         public WeatherVM()
         {
@@ -56,31 +62,44 @@ namespace WeatherApp.ViewModel
                 {
                     LocalizedName = "New York"
                 };
-
-                CurrentConditions = new CurrentConditions
+                CurrrentConditions = new CurrrentConditions
                 {
                     WeatherText = "Partly cloudy",
                     Temperature = new Temperature
                     {
                         Metric = new Units
                         {
-                            Value = 21
+                            Value = "21"
                         }
                     }
                 };
             }
 
             SearchCommand = new SearchCommand(this);
+            Cities = new ObservableCollection<City>();
+        }
+
+        private async void GetCurrentConditions()
+        {
+            Query = string.Empty;
+            Cities.Clear();
+            CurrrentConditions = await AccuWeatherHelper.GetCurrrentConditions(SelectedCity.Key);
         }
 
         public async void MakeQuery()
         {
             var cities = await AccuWeatherHelper.GetCities(Query);
+
+            Cities.Clear();
+            foreach(var city in cities)
+            {
+                Cities.Add(city);
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private void OnPropertyChanged (string propertyName)
+        private void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
